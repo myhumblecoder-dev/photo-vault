@@ -19,10 +19,16 @@ export default function CreateAlbumForm({
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    // #20 specifies reading from FormData; #19 specifies a controlled input.
+    // Both hold: the field stays controlled, and the value submitted is read
+    // off the form, so the two specs agree on observable behaviour.
+    const albumName = String(
+      new FormData(event.currentTarget).get('albumName') ?? '',
+    )
     setPending(true)
     setError('')
     try {
-      const album = await createAlbum(name)
+      const album = await createAlbum(albumName)
       setName('')
       onCreated?.(album)
     } catch (err) {
@@ -43,7 +49,11 @@ export default function CreateAlbumForm({
       <Button type="submit" disabled={pending}>
         {pending ? 'Creating…' : 'Create'}
       </Button>
-      {error ? <p role="alert">{error}</p> : null}
+      {error ? (
+        <p data-testid="album-error" role="alert">
+          {error}
+        </p>
+      ) : null}
     </form>
   )
 }
