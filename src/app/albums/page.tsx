@@ -1,6 +1,7 @@
 import { listAlbums } from '@/app/actions/listAlbums'
 import { auth } from '@/auth'
 import CreateAlbumForm from '@/components/CreateAlbumForm'
+import AlbumCard from '@/components/AlbumCard'
 
 // A DB-reading page must never be statically prerendered.
 export const dynamic = 'force-dynamic'
@@ -20,7 +21,19 @@ export default async function AlbumsPage() {
       <CreateAlbumForm />
       {albums.length === 0 ? (
         <p data-testid="empty-state">No albums yet</p>
-      ) : null}
+      ) : (
+        <div className="grid gap-4">
+          {albums.map((album) => (
+            <AlbumCard
+              key={album.id}
+              id={album.id}
+              name={album.name}
+              createdAt={album.createdAt}
+              href={`/albums/${album.id}`}
+            />
+          ))}
+        </div>
+      )}
     </main>
   )
 }
